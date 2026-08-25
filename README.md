@@ -326,6 +326,166 @@ python health_check.py
 
 ---
 
+## 🧠 Understanding RAG: How It Works
+
+### What is Retrieval-Augmented Generation?
+
+**RAG (Retrieval-Augmented Generation)** is an AI framework that combines two powerful capabilities:
+
+1. **Retrieval**: Finding relevant information from your documents
+2. **Generation**: Creating natural language responses using that information
+
+```
+┌─────────────┐     ┌──────────────┐     ┌─────────────┐
+│   Your      │     │   RAG       │     │    AI       │
+│  Question   │ ──► │   System    │ ──► │  Response   │
+│             │     │   Search    │     │             │
+└─────────────┘     └──────────────┘     └─────────────┘
+                           │
+                           ▼
+                    ┌──────────────┐
+                    │  Your PDFs   │
+                    │  (Knowledge) │
+                    └──────────────┘
+```
+
+### Why RAG Instead of Just Asking the AI?
+
+| Approach | Problem | RAG Solution |
+|----------|---------|--------------|
+| **Standard LLM** | May hallucinate facts | ✅ Grounded in your actual documents |
+| **Standard LLM** | No access to your private data | ✅ Works with your confidential PDFs |
+| **Standard LLM** | Knowledge cutoff (outdated) | ✅ Always uses latest documents |
+| **Search Only** | Returns links, not answers | ✅ Generates human-readable responses |
+
+### Step-by-Step Data Flow
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Agent as RAG Agent
+    participant Index as Vector Index
+    participant NVIDIA as NVIDIA API
+    participant LLM as Language Model
+
+    User->>Agent: "What was Q3 revenue?"
+    Agent->>Index: Search for relevant chunks
+    Index-->>Agent: Top 5 matching text segments
+    Agent->>NVIDIA: Rerank results for quality
+    NVIDIA-->>Agent: Ranked contexts
+    Agent->>LLM: Generate answer with context
+    LLM-->>Agent: "Q3 revenue was $2.5B..."
+    Agent-->>User: Final response with sources
+```
+
+#### Phase 1: Indexing (One-Time Setup)
+
+1. **Document Loading**: PDFs are read from `my_docs/` folder
+2. **Text Extraction**: Text and images extracted using PyMuPDF
+3. **Chunking**: Text split into overlapping segments (256 tokens, 50 overlap)
+4. **Embedding**: Each chunk converted to 1024-dimensional vector via NVIDIA
+5. **Storage**: Vectors saved in NumPy arrays with metadata cache
+
+#### Phase 2: Query Processing (Every Question)
+
+1. **Question Embedding**: User query converted to vector
+2. **Similarity Search**: Find closest document chunks (cosine similarity)
+3. **Reranking**: Re-score top results for better relevance
+4. **Context Assembly**: Combine retrieved chunks with question
+5. **LLM Generation**: Model generates answer grounded in retrieved context
+6. **Response Delivery**: Answer shown to user with source citations
+
+---
+
+## 🌍 Real-World Use Cases
+
+### Enterprise Scenarios
+
+| Industry | Use Case | Example Query |
+|----------|----------|---------------|
+| 📊 **Finance** | Analyze quarterly reports | "Compare profit margins across Q1-Q4" |
+| ⚖️ **Legal** | Contract review & compliance | "What are the termination clauses?" |
+| 🏥 **Healthcare** | Medical research papers | "Summarize findings on treatment X" |
+| 🎓 **Education** | Academic paper analysis | "Explain the methodology used in this study" |
+| 🏭 **Manufacturing** | Technical documentation | "How do I troubleshoot error code E-452?" |
+| 👥 **HR** | Employee handbook queries | "What's the policy on remote work?" |
+| 🔬 **Research** | Scientific literature review | "What compounds showed efficacy in trial?" |
+
+### Personal Productivity
+
+- 📚 **Students**: Upload lecture notes and textbooks for exam prep
+- 📰 **Researchers**: Process academic papers for literature reviews
+- 📑 **Consultants**: Analyze client documents for insights
+- 🏛️ **Lawyers**: Review case files and precedents quickly
+- 💼 **Executives**: Get summaries of lengthy reports
+
+---
+
+## ❓ Frequently Asked Questions (FAQ)
+
+### General Questions
+
+**Q: Do I need GPU to run this?**  
+A: No! All heavy computation happens on NVIDIA's cloud APIs. Your local machine only handles orchestration.
+
+**Q: Can this work offline?**  
+A: No, internet connection is required for NVIDIA and Sarvam API calls. However, once indexed, you don't need to reprocess PDFs.
+
+**Q: How many PDFs can I process?**  
+A: Practically unlimited. The system processes documents incrementally and caches results. Large libraries may take longer initially but subsequent queries remain fast.
+
+**Q: Does it support languages other than English?**  
+A: Yes! With Sarvam AI integration, you get native support for 11+ Indian languages including Hindi, Tamil, Bengali, Telugu, Marathi, Gujarati, Kannada, Malayalam, Punjabi, Assamese, and Odia.
+
+### Technical Questions
+
+**Q: What happens if the API is down?**  
+A: The system implements exponential backoff retry logic (up to 3 attempts). If all retries fail, you'll get a clear error message and can resume later.
+
+**Q: How is my data protected?**  
+A: Your PDFs never leave your machine. Only text chunks are sent to NVIDIA APIs for embedding/reranking, and these are not stored by NVIDIA. See [NVIDIA's privacy policy](https://www.nvidia.com/en-us/about-nvidia/privacy-policy/) for details.
+
+**Q: Can I use my own embedding model?**  
+A: Currently optimized for NVIDIA's `llama-3.2-nv-embedqa-1b-v2`. Custom model support is planned for future releases.
+
+**Q: How do I update documents after indexing?**  
+A: Simply add new PDFs to `my_docs/` and run normally. Changed files are detected via MD5 hash and reindexed automatically. Use `--force-reindex` to rebuild everything.
+
+### Cost & Performance
+
+**Q: Is there a free tier?**  
+A: NVIDIA offers free credits for new users. Check [build.nvidia.com](https://build.nvidia.com) for current pricing and free tier availability.
+
+**Q: How much does it cost to run?**  
+A: Typical usage costs:
+- Embedding: ~$0.01 per 100 pages
+- Query: ~$0.001 per question (with reranking)
+- Monthly average for moderate use: $5-20
+
+**Q: Why is the first query slow?**  
+A: Initial indexing happens on first run. Subsequent queries leverage cached embeddings and are much faster (<2 seconds typically).
+
+---
+
+## 📖 Glossary of Terms
+
+| Term | Definition |
+|------|------------|
+| **Chunk** | A small segment of text (typically 256 tokens) extracted from a document |
+| **Embedding** | Numerical vector representation of text that captures semantic meaning |
+| **Vector Store** | Database optimized for storing and searching embedding vectors |
+| **Cosine Similarity** | Mathematical measure of similarity between two vectors (range: -1 to 1) |
+| **Reranking** | Second-pass scoring of retrieved results to improve relevance |
+| **Token** | Basic unit of text for LLMs (roughly ¾ of a word) |
+| **Context Window** | Maximum amount of text an LLM can process in one request |
+| **Hallucination** | When an AI generates false or fabricated information |
+| **Semantic Search** | Finding content based on meaning rather than keyword matching |
+| **Multi-turn** | Conversation with multiple back-and-forth exchanges maintaining context |
+| **Checkpoint** | Saved state allowing interrupted processes to resume |
+| **Atomic Save** | File operation that prevents corruption by writing to temp file first |
+
+---
+
 ## 🤝 Contributing
 
 We welcome contributions! Please follow these steps:
