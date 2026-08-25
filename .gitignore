@@ -1,26 +1,45 @@
-# ─── Secrets ──────────────────────────────────────────────
-.env
-
-# ─── Python ───────────────────────────────────────────────
+```
+# Compiled and build artifacts
+*.pyc
 __pycache__/
-*.py[cod]
-*$py.class
-*.egg-info/
-dist/
-build/
+
+# Dependencies
+.venv/
 venv/
+node_modules/
 
-# ─── Data & Cache ─────────────────────────────────────────
-.rag_cache/
-my_docs/*.pdf
-
-# ─── Temp files (atomic writes) ──────────────────────────
+# Logs and temp files
+*.log
 *.tmp
+*.swp
 
-# ─── IDE / OS ─────────────────────────────────────────────
+# Environment
+.env
+.env.local
+.env.*
+
+# Editors
 .vscode/
 .idea/
-*.swp
-*.swo
-Thumbs.db
+
+# Coverage reports
+coverage/
+htmlcov/
+.coverage
+
+# OS generated files
 .DS_Store
+Thumbs.db
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Testing
+.pytest_cache/
+.mypy_cache/
+
+# Original rules preserved
+*.log
+```
