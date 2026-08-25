@@ -1,7 +1,7 @@
 # 🚀 Enterprise RAG Agent
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Docker](https://img.shields.io/badge/docker-supported-blue.svg)](https://www.docker.com/)
 
 A **production-grade Retrieval-Augmented Generation (RAG)** system that enables intelligent conversations with your PDF documents. Powered by **NVIDIA AI** models and **Sarvam AI** for multilingual capabilities, this agent combines state-of-the-art embedding, vision, and reranking technologies.
@@ -506,7 +506,16 @@ pip install pytest pytest-cov black flake8
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **Apache License 2.0** - see the [LICENSE](LICENSE) file for details.
+
+**What this means for you:**
+- ✅ Free to use for commercial and personal projects
+- ✅ Can modify and distribute the code
+- ✅ Can use patents granted by contributors
+- ✅ Must include copyright notice and license text
+- ✅ Must state changes made to the code
+- ❌ Cannot use trademarks without permission
+- ❌ No warranty provided (AS IS basis)
 
 ---
 
