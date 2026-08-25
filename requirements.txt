@@ -1,0 +1,22 @@
+# ─── NVIDIA RAG Pipeline Dependencies ─────────────────────
+# Core
+openai>=2.20.0
+requests>=2.31.0
+python-dotenv>=1.0.0
+
+# Data / ML
+numpy>=2.1.0
+scikit-learn>=1.5.0
+
+# PDF processing
+PyMuPDF>=1.24.0
+pymupdf4llm>=0.3.0
+
+# Progress bar
+tqdm>=4.66.0
+
+# Logging & monitoring
+structlog>=25.1.0
+
+# UI
+streamlit>=1.30.0

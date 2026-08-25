@@ -1,0 +1,26 @@
+# ─── Secrets ──────────────────────────────────────────────
+.env
+
+# ─── Python ───────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+venv/
+
+# ─── Data & Cache ─────────────────────────────────────────
+.rag_cache/
+my_docs/*.pdf
+
+# ─── Temp files (atomic writes) ──────────────────────────
+*.tmp
+
+# ─── IDE / OS ─────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+Thumbs.db
+.DS_Store
