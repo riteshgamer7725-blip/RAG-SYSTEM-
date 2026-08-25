@@ -1,0 +1,17 @@
+# ─── Docker Compose for NVIDIA RAG Agent ─────────────────────
+version: '3.8'
+
+services:
+  rag-agent:
+    build: .
+    volumes:
+      - ./my_docs:/app/my_docs:ro
+      - ./.rag_cache:/app/.rag_cache
+      - ./results:/app/results
+    environment:
+      - NVIDIA_API_KEY=${NVIDIA_API_KEY}
+      - SARVAM_API_KEY=${SARVAM_API_KEY}
+    stdin_open: true
+    tty: true
+    # Override command as needed
+    # command: python rag_agent.py --query "What is this document?" --output results/answer.json

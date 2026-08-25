@@ -21,7 +21,7 @@ import os
 import json
 import logging
 import time
-from typing import Generator, Optional
+from typing import Generator, Optional, List
 
 import requests
 from dotenv import load_dotenv
@@ -325,7 +325,11 @@ def get_sarvam(model: str = "sarvam-30b") -> SarvamRAG:
     """Lazy singleton — avoids re-creating the session on every call."""
     global _sarvam_instance
     if _sarvam_instance is None or _sarvam_instance.model != model:
-        _sarvam_instance = SarvamRAG(model=model)
+        try:
+            _sarvam_instance = SarvamRAG(model=model)
+        except ValueError as e:
+            logger.error("sarvam_init_failed", error=str(e))
+            raise
     return _sarvam_instance
 
 
@@ -337,6 +341,7 @@ def sarvam_ask_agent(
     model: str = "sarvam-30b",
     use_rerank: bool = True,
     rerank_top_n: int = 5,
+    retrieve_fn=None,      # Optional: inject retrieval function to avoid circular import
 ) -> str:
     """
     Drop-in replacement for rag_agent.ask_agent() that uses Sarvam AI
@@ -345,16 +350,28 @@ def sarvam_ask_agent(
     Usage in rag_agent.py:
         from sarvam_rag import sarvam_ask_agent
         answer = sarvam_ask_agent(question, chunks, embeddings, top_k=5)
+
+    Parameters
+    ----------
+    retrieve_fn : callable, optional
+        Injection of retrieve_chunks function to avoid circular import.
+        If None, imports from rag_agent at runtime.
     """
     if not question.strip():
         return "Please ask a question."
 
-    # ── Retrieval (reuse rag_agent's shared retrieval logic) ──────────
-    from rag_agent import _retrieve_chunks
-
-    final_chunks = _retrieve_chunks(
-        question, chunks, embeddings, top_k, use_rerank, rerank_top_n
-    )
+    # ── Retrieval (use shared retrieval logic to avoid circular import) ──────────
+    if retrieve_fn is not None:
+        # Use injected function (preferred - no circular import)
+        final_chunks = retrieve_fn(
+            question, chunks, embeddings, top_k, use_rerank, rerank_top_n
+        )
+    else:
+        # Fallback: import at runtime (creates circular dependency but works)
+        from rag_agent import retrieve_chunks
+        final_chunks = retrieve_chunks(
+            question, chunks, embeddings, top_k, use_rerank, rerank_top_n
+        )
 
     # ── Generation via Sarvam ─────────────────────────────────────────
     print("Thinking (Sarvam AI)...")

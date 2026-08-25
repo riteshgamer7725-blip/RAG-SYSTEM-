@@ -831,7 +831,7 @@ def detect_is_indic(text: str, threshold: float = 0.15) -> bool:
 # ---------------------------------------------------------------------------
 # 10. THE INTERFACE
 # ---------------------------------------------------------------------------
-def _retrieve_chunks(
+def retrieve_chunks(
     question: str,
     chunks: list,
     embeddings: np.ndarray,
@@ -897,6 +897,9 @@ def _generate_sarvam(question: str, context_chunks: list, model: str = "sarvam-3
     return rag.query(question, context_chunks)
 
 
+# Note: detect_is_indic() is defined earlier at line 809
+
+
 def ask_agent(
     question: str,
     chunks: list,
@@ -919,7 +922,7 @@ def ask_agent(
         return "Please ask a question."
 
     # ── Retrieval (always NVIDIA) ─────────────────────────────────────
-    final_chunks = _retrieve_chunks(
+    final_chunks = retrieve_chunks(
         question, chunks, embeddings, top_k, use_rerank, rerank_top_n
     )
 
