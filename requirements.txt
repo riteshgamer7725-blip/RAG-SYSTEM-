@@ -1,7 +1,7 @@
 # ─── NVIDIA RAG Pipeline Dependencies ─────────────────────
 # Core
 openai>=2.20.0
-requests>=2.31.0
+requests>=2.34.2
 python-dotenv>=1.0.0
 
 # Data / ML
