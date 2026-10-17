@@ -1,4 +1,3 @@
-```
 # Compiled and build artifacts
 *.pyc
 __pycache__/
@@ -40,6 +39,6 @@ build/
 .pytest_cache/
 .mypy_cache/
 
-# Original rules preserved
-*.log
-```
+# Project-specific
+.rag_cache/
+my_docs/*.pdf
