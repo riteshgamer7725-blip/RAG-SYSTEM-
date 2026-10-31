@@ -2,4 +2,4 @@
 # Run all tests: python -m pytest tests/
 # Or run individual test files: python tests/test_chunking.py
 
-pytest==9.1.1
+pytest==9.2.0
