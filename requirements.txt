@@ -13,7 +13,7 @@ PyMuPDF>=1.24.0
 pymupdf4llm>=1.28.2
 
 # Progress bar
-tqdm>=4.66.0
+tqdm>=4.70.1
 
 # Logging & monitoring
 structlog>=25.1.0
