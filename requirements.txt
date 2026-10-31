@@ -9,7 +9,7 @@ numpy>=2.1.0
 scikit-learn>=1.5.0
 
 # PDF processing
-PyMuPDF>=1.24.0
+PyMuPDF>=2.0
 pymupdf4llm>=1.28.2
 
 # Progress bar
